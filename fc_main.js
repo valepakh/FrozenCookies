@@ -1,5 +1,5 @@
 // Add polyfills:
-  
+
 (function (global) {
   var global_isFinite = global.isFinite;
   Object.defineProperty(Number, 'isFinite', {
@@ -13,28 +13,28 @@
 })(this);
 
 function setOverrides() {
-  
+
   // Set all cycleable preferencesau
   _.keys(FrozenCookies.preferenceValues).forEach(function(preference) {
     FrozenCookies[preference] = preferenceParse(preference, FrozenCookies.preferenceValues[preference].default);
   });
-  
+
   logEvent("Load", "Initial Load of Frozen Cookies v " + FrozenCookies.branch + "." + FrozenCookies.version + ". (You should only ever see this once.)");
 
   FrozenCookies.frequency = 100;
   FrozenCookies.efficiencyWeight = 1.0;
-  
+
   // Separate because these are user-input values
   FrozenCookies.cookieClickSpeed = preferenceParse('cookieClickSpeed',0);
   FrozenCookies.frenzyClickSpeed = preferenceParse('frenzyClickSpeed',0);
   FrozenCookies.HCAscendAmount = preferenceParse('HCAscendAmount',0);
-  
+
   // Becomes 0 almost immediately after user input, so default to 0
   FrozenCookies.timeTravelAmount = 0;
-  
+
   // Force redraw every 10 purchases
   FrozenCookies.autobuyCount = 0;
-  
+
   // Get historical data
   FrozenCookies.frenzyTimes = JSON.parse(localStorage.getItem('frenzyTimes')) || {};
 //  FrozenCookies.non_gc_time = Number(localStorage.getItem('nonFrenzyTime'));
@@ -63,17 +63,17 @@ function setOverrides() {
   // Allow autoCookie to run
   FrozenCookies.processing = false;
   FrozenCookies.priceReductionTest = false;
-  
+
   FrozenCookies.cookieBot = 0;
   FrozenCookies.autoclickBot = 0;
   FrozenCookies.autoFrenzyBot = 0;
   FrozenCookies.frenzyClickBot = 0;
-  
+
   // Smart tracking details
   FrozenCookies.smartTrackingBot = 0;
   FrozenCookies.minDelay = 1000 * 10; // 10s minimum reporting between purchases with "smart tracking" on
   FrozenCookies.delayPurchaseCount = 0;
-  
+
   // Caching
   FrozenCookies.recalculateCaches = true;
   FrozenCookies.caches = {};
@@ -81,7 +81,7 @@ function setOverrides() {
   FrozenCookies.caches.recommendationList = [];
   FrozenCookies.caches.buildings = [];
   FrozenCookies.caches.upgrades = [];
-  
+
   if (!blacklist[FrozenCookies.blacklist]) {
     FrozenCookies.blacklist = 0;
   }
@@ -309,7 +309,7 @@ function updateLocalStorage() {
   _.keys(FrozenCookies.preferenceValues).forEach(function(preference) {
     localStorage[preference] = FrozenCookies[preference];
   });
-  
+
   localStorage.frenzyClickSpeed = FrozenCookies.frenzyClickSpeed;
   localStorage.cookieClickSpeed = FrozenCookies.cookieClickSpeed;
   localStorage.HCAscendAmount = FrozenCookies.HCAscendAmount;
@@ -346,14 +346,14 @@ function copyToClipboard (text) {
   window.prompt ("Copy to clipboard: Ctrl+C, Enter", text);
   Game.promptOn = 0;
 }
- 
+
 function getBuildingSpread () {
   return Game.ObjectsById.map(function(a){return a.amount;}).join('/')
 }
 
 // todo: add bind for autoascend
 // Press 'a' to toggle autobuy.
-// Press 'b' to pop up a copyable window with building spread. 
+// Press 'b' to pop up a copyable window with building spread.
 // Press 'c' to toggle auto-GC
 // Press 'e' to pop up a copyable window with your export string
 // Press 'r' to pop up the reset window
@@ -449,7 +449,7 @@ function cyclePreference(preferenceName) {
       Game.RefreshStore();
       Game.RebuildUpgrades();
       FCStart();
-    }  
+    }
   }
 }
 
@@ -565,7 +565,7 @@ function cookieValue(bankAmount, wrathValue, wrinklerCount) {
   wrathValue = wrathValue != null ? wrathValue : Game.elderWrath;
   wrinklerCount = wrinklerCount != null ? wrinklerCount : (wrathValue ? 10 : 0);
   var wrinkler = wrinklerMod(wrinklerCount);
-  
+
   var value = 0;
   // Clot
   value -= cookieInfo.clot.odds[wrathValue] * (wrinkler * cps + clickCps) * luckyMod * 66 * 0.5;
@@ -607,7 +607,7 @@ function cookieStats(bankAmount, wrathValue, wrinklerCount) {
   wrathValue = wrathValue != null ? wrathValue : Game.elderWrath;
   wrinklerCount = wrinklerCount != null ? wrinklerCount : (wrathValue ? 10 : 0);
   var wrinkler = wrinklerMod(wrinklerCount);
-  
+
   var result = {};
   // Clot
   result.clot = -1 * cookieInfo.clot.odds[wrathValue] * (wrinkler * cps + clickCps) * luckyMod * 66 * 0.5;
@@ -645,7 +645,7 @@ function reindeerValue(wrathValue) {
   if (Game.season == 'christmas') {
     var remaining = 1 - (frenzyProbability(wrathValue) + clotProbability(wrathValue) + bloodProbability(wrathValue));
     var outputMod = Game.Has('Ho ho ho-flavored frosting') ? 2 : 1;
-    
+
     value += Math.max(25, baseCps() * outputMod * 60 * 7) * frenzyProbability(wrathValue);
     value += Math.max(25, baseCps() * outputMod * 60 * 0.5) * clotProbability(wrathValue);
     value += Math.max(25, baseCps() * outputMod * 60 * 666) * bloodProbability(wrathValue);
@@ -659,7 +659,7 @@ function reindeerCps(wrathValue) {
   return reindeerValue(wrathValue) / averageTime * FrozenCookies.simulatedGCPercent;
 }
 
-function calculateChainValue(bankAmount, cps, digit) { 
+function calculateChainValue(bankAmount, cps, digit) {
   x = Math.min(bankAmount, (cps * 60 * 60 * 6 * 4));
   n = Math.floor(Math.log((9*x)/(4*digit))/Math.LN10);
   return 125 * Math.pow(9,(n-3)) * digit;
@@ -1021,7 +1021,7 @@ function defaultPurchase() {
   }
 }
 
-function totalDiscount(building) {                                                                                    
+function totalDiscount(building) {
   var price = 1;
   if (building) {
     if (Game.Has('Season savings')) price*=0.99;
@@ -1048,7 +1048,7 @@ function cumulativeBuildingCost(basePrice, startingNumber, endingNumber) {
 function cumulativeSantaCost(amount) {
   var total = 0;
   if (!amount) {
-  
+
   } else if (Game.santaLevel + amount < Game.santaLevels.length) {
     for (var i=Game.santaLevel + 1; i <= Game.santaLevel + amount; i++) {
       total += Math.pow(i, i);
@@ -1066,7 +1066,7 @@ function cumulativeSantaCost(amount) {
 function cumulativeSantaCost(amount) {
   var total = 0;
   if (!amount) {
-    
+
   } else if (Game.santaLevel + amount < Game.santaLevels.length) {
     for (var i=Game.santaLevel + 1; i <= Game.santaLevel + amount; i++) {
       total += Math.pow(i, i);
@@ -1238,7 +1238,7 @@ function buyFunctionToggle(upgrade) {
     if (!upgrade.buyFunction) {
       return null;
     }
-    
+
     var ignoreFunctions = [
       /Game\.Earn\('.*\)/,
       /Game\.Lock\('.*'\)/,
@@ -1274,11 +1274,11 @@ function buyFunctionToggle(upgrade) {
         ignoreFunctions.forEach(function(b){a = a.replace(b,'')});
         return a != '';
       });
-    
+
     if (buyFunctions.length == 0) {
       return null;
     }
-    
+
     var reversedFunctions = buyFunctions.map(function(a){
       var reversed = '';
       var achievementMatch = /Game\.Win\('(.*)'\)/.exec(a);
@@ -1316,7 +1316,7 @@ function statSpeed() {
   var speed = 0;
   switch (FrozenCookies.trackStats) {
     case 1: // 60s
-      speed = 1000 * 60; 
+      speed = 1000 * 60;
       break;
     case 2: // 30m
       speed = 1000 * 60 * 30;
@@ -1345,16 +1345,16 @@ function saveStats(fromGraph) {
 
 function viewStatGraphs() {
   saveStats(true);
-  var containerDiv = $('#statGraphContainer').length ? 
-    $('#statGraphContainer') : 
+  var containerDiv = $('#statGraphContainer').length ?
+    $('#statGraphContainer') :
     $('<div>').attr('id', 'statGraphContainer')
       .html($('<div>')
       .attr('id', 'statGraphs'))
       .appendTo('body')
       .dialog({
-        modal:true, 
+        modal:true,
         title: 'Frozen Cookies Tracked Stats',
-        width:$(window).width() * 0.8, 
+        width:$(window).width() * 0.8,
         height:$(window).height() * 0.8
       });
   if (containerDiv.is(':hidden')) {
@@ -1363,7 +1363,7 @@ function viewStatGraphs() {
   if (FrozenCookies.trackedStats.length > 0 && (Date.now() - FrozenCookies.lastGraphDraw) > 1000) {
     FrozenCookies.lastGraphDraw = Date.now();
     $('#statGraphs').empty();
-    var graphs = $.jqplot('statGraphs', transpose(FrozenCookies.trackedStats.map(function(s) {return [[s.time / 1000, s.baseCps], [s.time / 1000, s.effectiveCps], [s.time / 1000, s.hc]]})),  // 
+    var graphs = $.jqplot('statGraphs', transpose(FrozenCookies.trackedStats.map(function(s) {return [[s.time / 1000, s.baseCps], [s.time / 1000, s.effectiveCps], [s.time / 1000, s.hc]]})),  //
       {
         legend: {show: true},
         height: containerDiv.height() - 50,
@@ -1418,22 +1418,22 @@ function updateCaches() {
       FrozenCookies.recalculateCaches = true;
       FrozenCookies.lastCPS = FrozenCookies.calculatedCps;
     }
-    
+
     if (FrozenCookies.currentBank.cost != currentBank.cost) {
       FrozenCookies.recalculateCaches = true;
       FrozenCookies.currentBank = currentBank;
     }
-    
+
     if (FrozenCookies.targetBank.cost != targetBank.cost) {
       FrozenCookies.recalculateCaches = true;
       FrozenCookies.targetBank = targetBank;
     }
-    
+
     if (FrozenCookies.lastCookieCPS != currentCookieCPS) {
       FrozenCookies.recalculateCaches = true;
       FrozenCookies.lastCookieCPS = currentCookieCPS;
     }
-    
+
     if (FrozenCookies.lastUpgradeCount != currentUpgradeCount) {
       FrozenCookies.recalculateCaches = true;
       FrozenCookies.lastUpgradeCount = currentUpgradeCount;
@@ -1453,11 +1453,11 @@ function doTimeTravel() {
         if (timeTravelMethod === 1) {
 
         } else if (timeTravelMethod === 3) {
-        
+
         }
       }
     } else {
-    
+
     }
   } else {
     FrozenCookies.timeTravelAmount = 0;
@@ -1507,7 +1507,7 @@ function logEvent(event, text, popup) {
 }
 
 function inRect(x,y,rect) {
-	// Duplicate of internally defined method, 
+	// Duplicate of internally defined method,
 	// only needed because I'm modifying the scope of Game.UpdateWrinklers and it can't see this anymore.
 	var dx = x+Math.sin(-rect.r)*(-(rect.h/2-rect.o)),dy=y+Math.cos(-rect.r)*(-(rect.h/2-rect.o));
 	var h1 = Math.sqrt(dx*dx + dy*dy);
@@ -1594,7 +1594,7 @@ function autoFrenzyClick() {
 
 function autoGSBuy() {
   if (Game.hasBuff('Click frenzy') > 0 || Game.hasBuff('Dragonflight') > 0) {
-    if (Game.Upgrades['Golden switch [off]'].unlocked 
+    if (Game.Upgrades['Golden switch [off]'].unlocked
         && !Game.Upgrades['Golden switch [off]'].bought) {
       Game.Upgrades['Golden switch [off]'].buy();
     }
@@ -1672,9 +1672,9 @@ function autoCookie() {
         logEvent('Wrinkler', 'Popped ' + popCount + ' wrinklers.');
       }
     }
-    
+
     var itemBought = false;
-    
+
     if (FrozenCookies.autoBuy && (Game.cookies >= delay + recommendation.cost) && (FrozenCookies.pastemode || isFinite(nextChainedPurchase().efficiency))) {
 //    if (FrozenCookies.autoBuy && (Game.cookies >= delay + recommendation.cost)) {
       recommendation.time = Date.now() - Game.startDate;
@@ -1718,7 +1718,7 @@ function autoCookie() {
     if (parseInt(fps_amounts[FrozenCookies["fpsModifier"]]) != Game.fps) {
       Game.fps = parseInt(fps_amounts[FrozenCookies["fpsModifier"]]);
     }
-    
+
     // This apparently *has* to stay here, or else fast purchases will multi-click it.
     if (goldenCookieLife() && FrozenCookies.autoGC) {
       for (var i in Game.shimmers) {
@@ -1742,7 +1742,7 @@ function autoCookie() {
       if (FrozenCookies.last_gc_state != 1 && currentFrenzy == 1) {
       	logEvent('GC', 'Frenzy ended, cookie production x1');
       	if (FrozenCookies.hc_gain) {
-      	  
+
 	  logEvent('HC', 'Won ' + FrozenCookies.hc_gain + ' heavenly chips during Frenzy. Rate: ' + (FrozenCookies.hc_gain * 1000) / (Date.now() - FrozenCookies.hc_gain_time) + ' HC/s.');
 	  FrozenCookies.hc_gain_time = Date.now();
 	  FrozenCookies.hc_gain = 0;
@@ -1776,7 +1776,7 @@ function autoCookie() {
 
 function FCStart() {
   //  To allow polling frequency to change, clear intervals before setting new ones.
-  
+
   if (FrozenCookies.cookieBot) {
     clearInterval(FrozenCookies.cookieBot);
     FrozenCookies.cookieBot = 0;
@@ -1789,12 +1789,12 @@ function FCStart() {
     clearInterval(FrozenCookies.statBot);
     FrozenCookies.statBot = 0;
   }
-  
+
   if (FrozenCookies.autoGSBot) {
       clearInterval(FrozenCookies.autoGSBot);
       FrozenCookies.autoGSBot = 0;
   }
-  
+
 //  if (!FrozenCookies.saveWrinklers && localStorage.wrinklers) {
 //    delete localStorage.wrinklers;
 //  }
@@ -1804,36 +1804,36 @@ function FCStart() {
 //    clearInterval(FrozenCookies.goldenCookieBot);
 //    FrozenCookies.goldenCookieBot = 0;
 //  }
-  
+
   // Now create new intervals with their specified frequencies.
-  
+
   if (FrozenCookies.frequency) {
     FrozenCookies.cookieBot = setTimeout(autoCookie, FrozenCookies.frequency);
   }
-  
+
 //  if (FrozenCookies.autoGC) {
 //    FrozenCookies.goldenCookieBot = setInterval(autoGoldenCookie, FrozenCookies.frequency);
 //  }
-  
+
   if (FrozenCookies.autoClick && FrozenCookies.cookieClickSpeed) {
     FrozenCookies.autoclickBot = setInterval(function() {if (!Game.OnAscend && !Game.AscendTimer) {Game.ClickCookie()}}, 1000 / FrozenCookies.cookieClickSpeed);
   }
-  
+
   if (FrozenCookies.autoFrenzy && FrozenCookies.frenzyClickSpeed) {
     FrozenCookies.frenzyClickBot = setInterval(autoFrenzyClick, FrozenCookies.frequency);
   }
-  
+
   if (FrozenCookies.autoGS) {
       FrozenCookies.autoGSBot = setInterval(autoGSBuy,FrozenCookies.frequency)
   }
-  
+
   if (statSpeed(FrozenCookies.trackStats) > 0) {
     FrozenCookies.statBot = setInterval(saveStats, statSpeed(FrozenCookies.trackStats));
   } else if (FrozenCookies.trackStats == 6 && !FrozenCookies.smartTrackingBot) {
     FrozenCookies.smartTrackingBot = setTimeout(function() {smartTrackingStats(FrozenCookies.minDelay * 8)}, FrozenCookies.minDelay);
   }
-  
 
-  
+
+
   FCMenu();
 }
