@@ -287,7 +287,7 @@ function fcReset() {
   FrozenCookies.frenzyTimes = {};
   FrozenCookies.last_gc_state = (Game.hasBuff('Frenzy') ? Game.buffs['Frenzy'].multCpS : 1) * hasClickFrenzy();
   FrozenCookies.last_gc_time = Date.now();
-  FrozenCookies.lastHCAmount = Game.HowMuchPrestige(Game.cookiesEarned + Game.cookiesReset + Game.wrinklers.reduce(function(s,w){return s + popValue(w.sucked);}, 0));
+  FrozenCookies.lastHCAmount = Game.HowMuchPrestige(Game.cookiesEarned + Game.cookiesReset + wrinklerValue());
   FrozenCookies.lastHCTime = Date.now();
   FrozenCookies.maxHCPercent = 0;
   FrozenCookies.prevLastHCTime = Date.now();
@@ -382,7 +382,7 @@ document.addEventListener('keydown', function(event) {
       Game.WriteSave();
     }
     if(event.keyCode == 87) {
-      Game.Notify('Wrinkler Info', 'Popping all wrinklers will give you ' + Beautify(Game.wrinklers.reduce(function(s,w){return s + popValue(w.sucked);},0)) + ' cookies. <input type="button" value="Click here to pop all wrinklers" onclick="Game.CollectWrinklers()"></input>', [19,8],7);
+      Game.Notify('Wrinkler Info', 'Popping all wrinklers will give you ' + Beautify(wrinklerValue()) + ' cookies. <input type="button" value="Click here to pop all wrinklers" onclick="Game.CollectWrinklers()"></input>', [19,8],7);
     }
   }
 });
@@ -1336,7 +1336,7 @@ function saveStats(fromGraph) {
     time: Date.now() - Game.startDate,
     baseCps: baseCps(),
     effectiveCps: effectiveCps(),
-    hc: Game.HowMuchPrestige(Game.cookiesEarned + Game.cookiesReset + Game.wrinklers.reduce(function(s,w){return s + popValue(w.sucked);},0))
+    hc: Game.HowMuchPrestige(Game.cookiesEarned + Game.cookiesReset + wrinklerValue())
   });
   if ($('#statGraphContainer').length > 0 && !$('#statGraphContainer').is(':hidden') && !fromGraph) {
     viewStatGraphs();
@@ -1628,7 +1628,7 @@ function reindeerLife() {
 function autoCookie() {
   if (!FrozenCookies.processing && !Game.OnAscend && !Game.AscendTimer) {
     FrozenCookies.processing = true;
-    var currentHCAmount = Game.HowMuchPrestige(Game.cookiesEarned + Game.cookiesReset + Game.wrinklers.reduce(function(s,w){return s + popValue(w.sucked);}, 0));
+    var currentHCAmount = Game.HowMuchPrestige(Game.cookiesEarned + Game.cookiesReset + wrinklerValue());
 
     if (Math.floor(FrozenCookies.lastHCAmount) < Math.floor(currentHCAmount)) {
       var changeAmount = currentHCAmount - FrozenCookies.lastHCAmount;
